@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Producto;
 use Illuminate\Http\Request;
+use Validator;
 
 class ProductoController extends Controller
 {
@@ -15,6 +16,12 @@ class ProductoController extends Controller
     public function index()
     {
         //
+        try {
+            $producto = Producto::all();
+            return response()->json(['code' => '200','data' => $producto], 200);
+        } catch (\Exception $ex) {
+            return response()->json(['error' => $ex->getMessage()], 400);
+        }
     }
 
     /**
@@ -36,6 +43,24 @@ class ProductoController extends Controller
     public function store(Request $request)
     {
         //
+        //$producto = request->all();
+        $validator = Validator::make($request->all(), $this->rulesValidation());
+        if ($validator->fails()) {
+            return response()->json(['code' => '400', 'message' => 'Request not valid for create product'], 400);
+        }
+        try {
+            $producto = new Producto();
+            $producto->identificador = $request->identificador;
+            $producto->titulo = $request->titulo;
+            $producto->precio = $request->precio;
+            $producto->imagen = $request->imagen;
+            $producto->ubicacion = $request->ubicacion;
+            $producto->link = $request->link;
+            $producto->save();
+        } catch (\Exception $ex) {
+            return response()->json(['error' => $ex->getMessage()],400);
+        }
+        return response()->json(['code' => '200','message' => 'Product created'], 200);
     }
 
     /**
@@ -81,5 +106,22 @@ class ProductoController extends Controller
     public function destroy(Producto $producto)
     {
         //
+    }
+
+    /**
+    * Rules validation of request plan
+    * @return array of rules validation
+    */
+    public function rulesValidation()
+    {
+        $rules = [
+            'identificador' => 'nullable|string',
+            'titulo' => 'required|string',
+            'precio' => 'required|integer',
+            'imagen' => 'required|string',
+            'ubicacion' => 'required|string',
+            'link' => 'required|string'
+        ];
+        return $rules;
     }
 }
