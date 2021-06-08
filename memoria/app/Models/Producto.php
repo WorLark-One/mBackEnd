@@ -11,11 +11,12 @@ class Producto extends Model
     protected $table = 'producto';
 
     protected $fillable = [
-        'identificador',
         'titulo',
+        'descripcion',
         'precio',
         'imagen',
         'ubicacion',
-        'link'
+        'link',
+        'marketplace'
     ];
 }

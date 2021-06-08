@@ -49,14 +49,28 @@ class ProductoController extends Controller
             return response()->json(['code' => '400', 'message' => 'Request not valid for create product'], 400);
         }
         try {
-            $producto = new Producto();
-            $producto->identificador = $request->identificador;
-            $producto->titulo = $request->titulo;
-            $producto->precio = $request->precio;
-            $producto->imagen = $request->imagen;
-            $producto->ubicacion = $request->ubicacion;
-            $producto->link = $request->link;
-            $producto->save();
+            $find = Producto::where('link', $request->link)->first();
+            if ($find == null) {
+                $producto = new Producto();
+                $producto->titulo = $request->titulo;
+                $producto->descripcion = $request->descripcion;
+                $producto->precio = $request->precio;
+                $producto->imagen = $request->imagen;
+                $producto->ubicacion = $request->ubicacion;
+                $producto->link = $request->link;
+                $producto->marketplace = $request->marketplace;
+                $producto->save();
+            } else {
+                $find->titulo = $request->titulo;
+                $find->descripcion = $request->descripcion;
+                $find->precio = $request->precio;
+                $find->imagen = $request->imagen;
+                $find->ubicacion = $request->ubicacion;
+                $find->link = $request->link;
+                $find->marketplace = $request->marketplace;
+                $find->save();
+                return response()->json(['code' => '200','message' => 'Product updated'], 200);
+            }
         } catch (\Exception $ex) {
             return response()->json(['error' => $ex->getMessage()],400);
         }
@@ -115,12 +129,13 @@ class ProductoController extends Controller
     public function rulesValidation()
     {
         $rules = [
-            'identificador' => 'nullable|string',
             'titulo' => 'required|string',
+            'descripcion' => 'nullable|string',
             'precio' => 'required|integer',
             'imagen' => 'required|string',
             'ubicacion' => 'required|string',
-            'link' => 'required|string'
+            'link' => 'required|string',
+            'marketplace' => 'required|string'
         ];
         return $rules;
     }
