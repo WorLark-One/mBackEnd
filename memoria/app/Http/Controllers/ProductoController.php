@@ -80,12 +80,17 @@ class ProductoController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Producto  $producto
      * @return \Illuminate\Http\Response
      */
-    public function show(Producto $producto)
+    public function show($id)
     {
         //
+        try {
+            $producto = Producto::findOrFail($id);
+            return response()->json(['code' => '200','data' => $producto], 200);
+        } catch (\Exception $ex) {
+            return response()->json(['error' => $ex->getMessage()],400);
+        }
     }
 
     /**
@@ -130,7 +135,7 @@ class ProductoController extends Controller
     {
         $rules = [
             'titulo' => 'required|string',
-            'descripcion' => 'nullable|string',
+            'descripcion' => 'nullable',
             'precio' => 'required|integer',
             'imagen' => 'required|string',
             'ubicacion' => 'required|string',
