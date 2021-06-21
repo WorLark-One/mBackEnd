@@ -25,6 +25,23 @@ class ProductoController extends Controller
     }
 
     /**
+     * Search
+     *
+     * @param  \Illuminate\Http\Request  $request
+    */
+    public function search($producto, $comuna, $paginacion){
+        if($producto && $comuna && $paginacion){
+            try {
+                $p = Producto::orderBy('precio', 'ASC')->where('titulo', 'LIKE', "%$producto%")->where('ubicacion', $comuna)->get();
+                return response()->json(['code' => '200','data' => $p], 200);
+            } catch (\Exception $ex) {
+                return response()->json(['error' => $ex->getMessage()],400);
+            }
+        }
+        return response()->json(['code' => '400','message' => 'Get not valid for search product'], 200);
+    }
+
+    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
@@ -43,7 +60,6 @@ class ProductoController extends Controller
     public function store(Request $request)
     {
         //
-        //$producto = request->all();
         $validator = Validator::make($request->all(), $this->rulesValidation());
         if ($validator->fails()) {
             return response()->json(['code' => '400', 'message' => 'Request not valid for create product'], 400);
@@ -128,7 +144,7 @@ class ProductoController extends Controller
     }
 
     /**
-    * Rules validation of request plan
+    * Rules validation of request producto
     * @return array of rules validation
     */
     public function rulesValidation()
