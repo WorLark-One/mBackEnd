@@ -52,7 +52,7 @@ class ProductoController extends Controller
                         $p = $p->where('precio', '>=', intval($auxRangoPrecio[0]))->where('precio', '<=',intval($auxRangoPrecio[1]));
                     }
                 }
-                return response()->json(['code' => '200','data' => $p], 200);
+                return response()->json(['code' => '200','data' => $p, 'totalProductos' => $p->count()], 200);
             } catch (\Exception $ex) {
                 return response()->json(['error' => $ex->getMessage()],400);
             }
