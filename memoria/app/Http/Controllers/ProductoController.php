@@ -29,14 +29,29 @@ class ProductoController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
     */
-    public function search($producto, $comuna, $paginacion){
-        if($producto && $comuna && $paginacion){
+    public function search($producto, $comuna, $orientacion, $marketplace, $rangoprecio, $paginacion){
+        if($producto && $comuna && $orientacion && $marketplace && $rangoprecio && $paginacion){
             try {
+                $p = null;
                 if($comuna == 'Todas') {
-                    $p = Producto::orderBy('precio', $paginacion)->where('titulo', 'LIKE', "%$producto%")->get();
-                    return response()->json(['code' => '200','data' => $p], 200);
+                    $p = Producto::orderBy('precio', $orientacion)->where('titulo', 'LIKE', "%$producto%")->get();
+                } else {
+                    $p = Producto::orderBy('precio', $orientacion)->where('titulo', 'LIKE', "%$producto%")->where('ubicacion', $comuna)->get();
                 }
-                $p = Producto::orderBy('precio', $paginacion)->where('titulo', 'LIKE', "%$producto%")->where('ubicacion', $comuna)->get();
+                if($marketplace !='ComunidadC+marketmaule+MercadoLibre'){
+                    $auxMarketPLace = explode("+", $marketplace);
+                    if(count($auxMarketPLace) == 2) {
+                        $p = $p->whereIn('marketplace', [ $auxMarketPLace[0],$auxMarketPLace[1]]);
+                    } else {
+                        $p = $p->where('marketplace', '=', $marketplace);
+                    }
+                }
+                if ($rangoprecio != 'Todos') {
+                    $auxRangoPrecio = explode("to", $rangoprecio);
+                    if (count($auxRangoPrecio) == 2) {
+                        $p = $p->where('precio', '>=', intval($auxRangoPrecio[0]))->where('precio', '<=',intval($auxRangoPrecio[1]));
+                    }
+                }
                 return response()->json(['code' => '200','data' => $p], 200);
             } catch (\Exception $ex) {
                 return response()->json(['error' => $ex->getMessage()],400);
