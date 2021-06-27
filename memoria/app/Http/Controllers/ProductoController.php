@@ -32,7 +32,11 @@ class ProductoController extends Controller
     public function search($producto, $comuna, $paginacion){
         if($producto && $comuna && $paginacion){
             try {
-                $p = Producto::orderBy('precio', 'ASC')->where('titulo', 'LIKE', "%$producto%")->where('ubicacion', $comuna)->get();
+                if($comuna == 'Todas') {
+                    $p = Producto::orderBy('precio', $paginacion)->where('titulo', 'LIKE', "%$producto%")->get();
+                    return response()->json(['code' => '200','data' => $p], 200);
+                }
+                $p = Producto::orderBy('precio', $paginacion)->where('titulo', 'LIKE', "%$producto%")->where('ubicacion', $comuna)->get();
                 return response()->json(['code' => '200','data' => $p], 200);
             } catch (\Exception $ex) {
                 return response()->json(['error' => $ex->getMessage()],400);
