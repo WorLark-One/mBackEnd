@@ -33,6 +33,8 @@ class ProductoController extends Controller
         if($producto && $comuna && $orientacion && $marketplace && $rangoprecio && $paginacion){
             try {
                 $p = null;
+                $precioMinRango = 0;
+                $PrecioMaxRango = 1;
                 if($comuna == 'Todas') {
                     $p = Producto::orderBy('precio', $orientacion)->where('titulo', 'LIKE', "%$producto%");
                 } else {
@@ -46,15 +48,21 @@ class ProductoController extends Controller
                         $p = $p->where('marketplace', '=', $marketplace);
                     }
                 }
+                $max = $p->max('precio');
                 if ($rangoprecio != 'Todos') {
                     $auxRangoPrecio = explode("to", $rangoprecio);
                     if (count($auxRangoPrecio) == 2) {
-                        $p = $p->where('precio', '>=', intval($auxRangoPrecio[0]))->where('precio', '<=',intval($auxRangoPrecio[1]));
+                        $precioMinRango = intval($auxRangoPrecio[0]);
+                        $PrecioMaxRango = intval($auxRangoPrecio[1]);
+                        $p = $p->where('precio', '>=', $precioMinRango)->where('precio', '<=',$PrecioMaxRango);
                     }
+                } else {
+                    $precioMinRango = 0;
+                    $PrecioMaxRango = $max;
                 }
                 //$paginatedResult = ColectionPaginate::paginate($p, 10);
                 $p = $p->get();
-                return response()->json(['code' => '200','data' => $p, 'totalProductos' => $p->count()], 200);
+                return response()->json(['code' => '200','data' => $p, 'totalProductos' => $p->count(), 'precioMaximo' => $max, 'precioMinRango' => $precioMinRango, 'precioMaxRango' => $PrecioMaxRango], 200);
             } catch (\Exception $ex) {
                 return response()->json(['error' => $ex->getMessage()],400);
             }
