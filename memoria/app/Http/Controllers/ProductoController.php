@@ -34,9 +34,9 @@ class ProductoController extends Controller
             try {
                 $p = null;
                 if($comuna == 'Todas') {
-                    $p = Producto::orderBy('precio', $orientacion)->where('titulo', 'LIKE', "%$producto%")->get();
+                    $p = Producto::orderBy('precio', $orientacion)->where('titulo', 'LIKE', "%$producto%");
                 } else {
-                    $p = Producto::orderBy('precio', $orientacion)->where('titulo', 'LIKE', "%$producto%")->where('ubicacion', $comuna)->get();
+                    $p = Producto::orderBy('precio', $orientacion)->where('titulo', 'LIKE', "%$producto%")->where('ubicacion', $comuna);
                 }
                 if($marketplace !='ComunidadC+marketmaule+MercadoLibre'){
                     $auxMarketPLace = explode("+", $marketplace);
@@ -52,6 +52,8 @@ class ProductoController extends Controller
                         $p = $p->where('precio', '>=', intval($auxRangoPrecio[0]))->where('precio', '<=',intval($auxRangoPrecio[1]));
                     }
                 }
+                //$paginatedResult = ColectionPaginate::paginate($p, 10);
+                $p = $p->get();
                 return response()->json(['code' => '200','data' => $p, 'totalProductos' => $p->count()], 200);
             } catch (\Exception $ex) {
                 return response()->json(['error' => $ex->getMessage()],400);
