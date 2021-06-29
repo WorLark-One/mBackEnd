@@ -25,8 +25,7 @@ class ProductoController extends Controller
     }
 
     /**
-     * Search
-     *
+     * Buscar producto
      * @param  \Illuminate\Http\Request  $request
     */
     public function search($producto, $comuna, $orientacion, $marketplace, $rangoprecio, $paginacion){
@@ -38,7 +37,7 @@ class ProductoController extends Controller
                 if($comuna == 'Todas') {
                     $p = Producto::orderBy('precio', $orientacion)->where('titulo', 'LIKE', "%$producto%");
                 } else {
-                    $p = Producto::orderBy('precio', $orientacion)->where('titulo', 'LIKE', "%$producto%")->where('ubicacion', $comuna);
+                    $p = Producto::orderBy('precio', $orientacion)->where('titulo', 'LIKE', "%$producto%")->where('ubicacion', '=', $comuna);
                 }
                 if($marketplace !='ComunidadC+marketmaule+MercadoLibre'){
                     $auxMarketPLace = explode("+", $marketplace);
@@ -62,7 +61,8 @@ class ProductoController extends Controller
                 }
                 //$paginatedResult = ColectionPaginate::paginate($p, 10);
                 $p = $p->get();
-                return response()->json(['code' => '200','data' => $p, 'totalProductos' => $p->count(), 'precioMaximo' => $max, 'precioMinRango' => $precioMinRango, 'precioMaxRango' => $PrecioMaxRango], 200);
+                return response()->json(['code' => '200','data' => $p, 'totalProductos' => $p->count(), 
+                    'precioMaximo' => $max, 'precioMinRango' => $precioMinRango, 'precioMaxRango' => $PrecioMaxRango], 200);
             } catch (\Exception $ex) {
                 return response()->json(['error' => $ex->getMessage()],400);
             }
