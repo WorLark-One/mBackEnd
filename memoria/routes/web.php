@@ -17,6 +17,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+//Route::post('login','Auth\LoginController@login');
+
 /*Route::prefix('public')->group(function () {
     Route::get('/getProductos', [ProductoController::class, 'index']);
     Route::post('/postProducto', [ProductoController::class, 'store']);
