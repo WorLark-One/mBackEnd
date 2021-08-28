@@ -4,6 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ComunaController;
+use App\Http\Controllers\UserController;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,7 +20,10 @@ use App\Http\Controllers\ComunaController;
 */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+    $user = $request->user();
+    $roles = $user->getRoleNames();
+    $permisos = $user->getAllPermissions();
+    return response()->json(['code' => '200','user' => $user, 'roles' => $roles, 'permisos' => $permisos], 200);
 });
 
 
@@ -30,6 +36,7 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'private'], function
 
 
 Route::group(['middleware' => [], 'prefix' => 'public'], function () {
+    Route::post('/registerUser', [UserController::class, 'store']);
     Route::get('/getProductos', [ProductoController::class, 'index']);
     Route::post('/postProducto', [ProductoController::class, 'store']);
     Route::get('/getProducto/{id}', [ProductoController::class, 'mostrar']);
