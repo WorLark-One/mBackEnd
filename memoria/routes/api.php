@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\PrecioProductoController;
 use App\Http\Controllers\ComunaController;
 use App\Http\Controllers\UserController;
 use Spatie\Permission\Models\Role;
@@ -40,5 +41,6 @@ Route::group(['middleware' => [], 'prefix' => 'public'], function () {
     Route::get('/getProductos', [ProductoController::class, 'index']);
     Route::post('/postProducto', [ProductoController::class, 'store']);
     Route::get('/getProducto/{id}', [ProductoController::class, 'mostrar']);
+    Route::get('/getHistorial/{id}', [PrecioProductoController::class, 'show']);
     Route::get('/getSearch/p={producto}/c={comuna}/ori={orientacion}/mp={marletplace}/rgp={rangoprecio}/pag={paginacion}', [ProductoController::class, 'search']);
 });

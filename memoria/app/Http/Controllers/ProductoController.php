@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Producto;
+use App\Models\PrecioProducto;
 use Illuminate\Http\Request;
 use Validator;
 
@@ -113,7 +114,12 @@ class ProductoController extends Controller
                 $find->ubicacion = $request->ubicacion;
                 $find->link = $request->link;
                 $find->marketplace = $request->marketplace;
+                $precioProducto = new PrecioProducto();
+                $precioProducto->producto_id = $find->id;
+                $precioProducto->precio = $request->precio;
+                $precioProducto->fecha = date('Y-m-d');
                 $find->save();
+                $precioProducto->save();
                 return response()->json(['code' => '200','message' => 'Product updated'], 200);
             }
         } catch (\Exception $ex) {
