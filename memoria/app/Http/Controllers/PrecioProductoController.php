@@ -49,10 +49,9 @@ class PrecioProductoController extends Controller
         try {
             $historial = PrecioProducto::orderBy('created_at', 'DESC')
                 ->where('producto_id', '=', $id)
-                ->select('fecha', 'precio')
-                ->distinct('fecha')
-                ->take(30)
-                ->get();
+                ->select('fecha', 'precio');
+                
+            $historial = $historial->take(15)->distinct()->get();
             return response()->json(['code' => '200','data' => $historial], 200);
         } catch (\Exception $ex) {
             return response()->json(['error' => $ex->getMessage()],400);

@@ -18,6 +18,8 @@ class Producto extends Model
         'imagen',
         'ubicacion',
         'link',
-        'marketplace'
+        'marketplace',
+        'valoracion',
+        'cantidad_valoraciones'
     ];
 }
