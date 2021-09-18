@@ -106,6 +106,11 @@ class ProductoController extends Controller
                 $producto->link = $request->link;
                 $producto->marketplace = $request->marketplace;
                 $producto->save();
+                $precioProducto = new PrecioProducto();
+                $precioProducto->producto_id = $producto->id;
+                $precioProducto->precio = $request->precio;
+                $precioProducto->fecha = date('Y-m-d');
+                $precioProducto->save();
             } else {
                 $find->titulo = $request->titulo;
                 $find->descripcion = $request->descripcion;
