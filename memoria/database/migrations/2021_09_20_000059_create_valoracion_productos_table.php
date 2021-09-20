@@ -16,9 +16,11 @@ class CreateValoracionProductosTable extends Migration
         Schema::create('valoracion_productos', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('value');
-            $table->string('name', 500);
+            $table->string('comentario', 500);
             $table->string('nombre_usuario', 50);
             $table->text('nombre_producto');
+            $table->bigInteger('producto_id')->unsigned();
+            $table->bigInteger('usuario_id')->unsigned();
             $table->foreign('producto_id')->references('id')->on('producto')->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('usuario_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();

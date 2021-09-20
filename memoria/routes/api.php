@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\PrecioProductoController;
 use App\Http\Controllers\ComunaController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ValoracionProductoController;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
@@ -33,6 +34,11 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'private'], function
     Route::post('/postComuna', [ComunaController::class, 'store']);
     Route::put('/updateComuna/{id}', [ComunaController::class, 'update']);
     Route::delete('/deleteComuna/{id}', [ComunaController::class, 'destroy']);
+    Route::get('/getRatingUser/{usuario_id}', [ValoracionProductoController::class, 'ratingUser']);
+    Route::get('/getIsRating/{usuario_id}/{producto_id}', [ValoracionProductoController::class, 'isRating']);
+    Route::delete('/deleteRating/{id}/{usuario_id}', [ValoracionProductoController::class, 'destroy']);
+    Route::put('/updateRating/{id}', [ValoracionProductoController::class, 'update']);
+    Route::post('/postRating', [ValoracionProductoController::class, 'store']);
 });
 
 
@@ -42,5 +48,6 @@ Route::group(['middleware' => [], 'prefix' => 'public'], function () {
     Route::post('/postProducto', [ProductoController::class, 'store']);
     Route::get('/getProducto/{id}', [ProductoController::class, 'mostrar']);
     Route::get('/getHistorial/{id}', [PrecioProductoController::class, 'show']);
+    Route::get('/getDetailsRating/{producto_id}', [ValoracionProductoController::class, 'detailsRating']);
     Route::get('/getSearch/p={producto}/c={comuna}/ori={orientacion}/mp={marletplace}/rgp={rangoprecio}/pag={paginacion}', [ProductoController::class, 'search']);
 });
