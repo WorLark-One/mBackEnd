@@ -154,7 +154,7 @@ class ValoracionProductoController extends Controller
             $usuario = User::findOrFail($usuario_id);
             $Valoracion = ValoracionProducto::findOrFail($id);
             if($Valoracion->usuario_id == $usuario_id){
-                $producto->delete();
+                $Valoracion->delete();
             } else {
                 return response()->json(['code' => '400','message' => 'Only the user who created the rating can delete it'], 200);
             }
