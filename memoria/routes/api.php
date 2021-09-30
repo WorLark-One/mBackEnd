@@ -7,6 +7,7 @@ use App\Http\Controllers\PrecioProductoController;
 use App\Http\Controllers\ComunaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ValoracionProductoController;
+use App\Http\Controllers\MiListaUserController;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
@@ -39,6 +40,11 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'private'], function
     Route::delete('/deleteRating/{id}/{usuario_id}', [ValoracionProductoController::class, 'destroy']);
     Route::put('/updateRating/{id}', [ValoracionProductoController::class, 'update']);
     Route::post('/postRating', [ValoracionProductoController::class, 'store']);
+    Route::post('/postProductMiList', [MiListaUserController::class, 'store']);
+    Route::delete('/deleteProductMiList/{id}/{usuario_id}', [MiListaUserController::class, 'destroy']);
+    Route::delete('/deleteAuxProductMiList/{id}/{usuario_id}', [MiListaUserController::class, 'destroyAux']);
+    Route::get('/getOnUserList/{usuario_id}/{producto_id}', [MiListaUserController::class, 'onUserList']);
+    Route::get('/getUserList/{usuario_id}', [MiListaUserController::class, 'userList']);
 });
 
 
