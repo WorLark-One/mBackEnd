@@ -29,8 +29,8 @@ class ProductoController extends Controller
      * Buscar producto
      * @param  \Illuminate\Http\Request  $request
     */
-    public function search($producto, $comuna, $orientacion, $marketplace, $rangoprecio, $paginacion){
-        if($producto && $comuna && $orientacion && $marketplace && $rangoprecio && $paginacion){
+    public function search($producto, $comuna, $orientacion, $marketplace, $rangoprecio, $valoracion, $paginacion){
+        if($producto && $comuna && $orientacion && $marketplace && $rangoprecio && $valoracion >= 0 && $paginacion){
             try {
                 $p = null;
                 $precioMinRango = 0;
@@ -60,6 +60,7 @@ class ProductoController extends Controller
                     $precioMinRango = 0;
                     $PrecioMaxRango = $max;
                 }
+                $p = $p->where('valoracion', '>=', $valoracion);
                 //$paginatedResult = ColectionPaginate::paginate($p, 10);
                 $p = $p->get();
                 return response()->json(['code' => '200','data' => $p, 'totalProductos' => $p->count(), 
@@ -112,17 +113,47 @@ class ProductoController extends Controller
                 $precioProducto->fecha = date('Y-m-d');
                 $precioProducto->save();
             } else {
+                if($find->descuento == 0 ) {
+                    $descuento = $this->obtenerDescuento($request->precio, $find->precio);
+                    if($descuento > 0) {
+                        $find->descuento = $descuento;
+                        $find->fecha_descuento = date('Y-m-d');
+                        //enviar notificaciones y correos
+                    } else {
+                        $find->descuento = 0;
+                        $find->fecha_descuento = date('Y-m-d');
+                    }
+                } else if ($find->descuento > 0){
+                    if ($find->precio == $request->precio){
+                        $date = date("Y-m-d", strtotime("-5 day"));
+                        if($find->fecha_descuento < $date){
+                            $find->descuento = 0;
+                            $find->fecha_descuento = date('Y-m-d');
+                        }
+                    }
+                    else if($request->precio < $find->precio) {
+                        $descuento = $this->obtenerDescuento($request->precio, $find->precio);
+                        $find->descuento = $descuento;
+                        $find->fecha_descuento = date('Y-m-d');
+                        //enviar notificaciones y correos
+                    } else {
+                        $find->descuento = 0;
+                        $find->fecha_descuento = date('Y-m-d');
+                    }
+                }
                 $find->titulo = $request->titulo;
                 $find->descripcion = $request->descripcion;
                 $find->precio = $request->precio;
                 $find->imagen = $request->imagen;
                 $find->ubicacion = $request->ubicacion;
                 $find->link = $request->link;
+                $find->puntaje_tendencia = $this->obtenerTendencia($find->visualizaciones, $find->descuento, $find->valoracion);
                 $find->marketplace = $request->marketplace;
                 $precioProducto = new PrecioProducto();
                 $precioProducto->producto_id = $find->id;
                 $precioProducto->precio = $request->precio;
                 $precioProducto->fecha = date('Y-m-d');
+                
                 $find->save();
                 $precioProducto->save();
                 return response()->json(['code' => '200','message' => 'Product updated'], 200);
@@ -147,6 +178,64 @@ class ProductoController extends Controller
         } catch (\Exception $ex) {
             return response()->json(['error' => $ex->getMessage()],400);
         }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function productoVisitado($id)
+    {
+        //
+        try {
+            $producto = Producto::findOrFail($id);
+            $producto->visualizaciones = $producto->visualizaciones + 1;
+            $producto->puntaje_tendencia = $this->obtenerTendencia($producto->visualizaciones, $producto->descuento, $producto->valoracion);
+            $producto->save();
+            return response()->json(['code' => '200','view' => true], 200);
+        } catch (\Exception $ex) {
+            return response()->json(['error' => $ex->getMessage()],400);
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @return tendencia
+     */
+    public function obtenerTendencia($visualizaciones, $descuento, $valoracion) {
+        $alfa = 0.33;
+        $beta = 0.33;
+        $gama = 0.34;
+        $tendencia = 0;
+        $visualizacionesAux = 100;
+        $valoracionPorcentaje = $this->obtenerPorcentajeEstrellas($valoracion);
+        if ($visualizaciones > 100){
+            $tendencia = ($visualizacionesAux * $alfa) + ($descuento * $beta) + ($valoracionPorcentaje * $gama);
+        } else {
+            $tendencia = ($visualizaciones * $alfa) + ($descuento * $beta) + ($valoracionPorcentaje * $gama);
+        }
+        return $tendencia;
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @return descuento
+     */
+    public function obtenerDescuento($precio, $precioAnterior) {
+        $descuento = 0;
+        if($precioAnterior != null) {
+            $descuento = 100 - (($precio * 100)/$precioAnterior);
+        }
+        return $descuento;
+    }
+
+    public function obtenerPorcentajeEstrellas($valoracion) {
+        $porcentaje = ((float)$valoracion * 100) / 5; // Regla de tres
+        $porcentaje = round($porcentaje, 0);  // Quitar los decimales
+        return $porcentaje;
     }
 
     /**

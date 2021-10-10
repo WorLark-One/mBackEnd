@@ -53,7 +53,8 @@ Route::group(['middleware' => [], 'prefix' => 'public'], function () {
     Route::get('/getProductos', [ProductoController::class, 'index']);
     Route::post('/postProducto', [ProductoController::class, 'store']);
     Route::get('/getProducto/{id}', [ProductoController::class, 'mostrar']);
+    Route::get('/productoVisitado/{id}', [ProductoController::class, 'productoVisitado']);
     Route::get('/getHistorial/{id}', [PrecioProductoController::class, 'show']);
     Route::get('/getDetailsRating/{producto_id}', [ValoracionProductoController::class, 'detailsRating']);
-    Route::get('/getSearch/p={producto}/c={comuna}/ori={orientacion}/mp={marletplace}/rgp={rangoprecio}/pag={paginacion}', [ProductoController::class, 'search']);
+    Route::get('/getSearch/p={producto}/c={comuna}/ori={orientacion}/mp={marletplace}/rgp={rangoprecio}/val={valoracion}/pag={paginacion}', [ProductoController::class, 'search']);
 });

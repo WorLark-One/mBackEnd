@@ -22,6 +22,9 @@ class CreateProductosTable extends Migration
             $table->string('ubicacion');
             $table->string('link')->unique();
             $table->string('marketplace');
+            $table->float('valoracion');
+            $table->bigInteger('cantidad_valoraciones');
+            $table->bigInteger('visualizaciones');
             $table->timestamps();
         });
     }

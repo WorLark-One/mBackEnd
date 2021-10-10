@@ -66,11 +66,38 @@ class ValoracionProductoController extends Controller
             $CantValoraciones = ValoracionProducto::where('producto_id','=', $request->producto_id)->count();
             $producto->valoracion = $AvgValoraciones;
             $producto->cantidad_valoraciones = $CantValoraciones;
+            $producto->puntaje_tendencia = $this->obtenerTendencia($producto->visualizaciones, $producto->descuento, $producto->valoracion);
             $producto->save();
         } catch (\Exception $ex) {
             return response()->json(['error' => $ex->getMessage()],400);
         }
         return response()->json(['code' => '200','message' => 'Rating created'], 200);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @return tendencia
+     */
+    public function obtenerTendencia($visualizaciones, $descuento, $valoracion) {
+        $alfa = 0.33;
+        $beta = 0.33;
+        $gama = 0.34;
+        $tendencia = 0;
+        $visualizacionesAux = 100;
+        $valoracionPorcentaje = $this->obtenerPorcentajeEstrellas($valoracion);
+        if ($visualizaciones > 100){
+            $tendencia = ($visualizacionesAux * $alfa) + ($descuento * $beta) + ($valoracionPorcentaje * $gama);
+        } else {
+            $tendencia = ($visualizaciones * $alfa) + ($descuento * $beta) + ($valoracionPorcentaje * $gama);
+        }
+        return $tendencia;
+    }
+
+    public function obtenerPorcentajeEstrellas($valoracion) {
+        $porcentaje = ((float)$valoracion * 100) / 5; // Regla de tres
+        $porcentaje = round($porcentaje, 0);  // Quitar los decimales
+        return $porcentaje;
     }
 
     /**

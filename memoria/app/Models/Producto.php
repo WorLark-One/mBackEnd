@@ -20,6 +20,10 @@ class Producto extends Model
         'link',
         'marketplace',
         'valoracion',
-        'cantidad_valoraciones'
+        'cantidad_valoraciones',
+        'puntaje_tendencia',
+        'visualizaciones',
+        'descuento',
+        'fecha_descuento'
     ];
 }
