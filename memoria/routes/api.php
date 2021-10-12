@@ -51,6 +51,7 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'private'], function
 Route::group(['middleware' => [], 'prefix' => 'public'], function () {
     Route::post('/registerUser', [UserController::class, 'store']);
     Route::get('/getProductos', [ProductoController::class, 'index']);
+    Route::get('/getHomeProductos', [ProductoController::class, 'homeProducts']);
     Route::post('/postProducto', [ProductoController::class, 'store']);
     Route::get('/getProducto/{id}', [ProductoController::class, 'mostrar']);
     Route::get('/productoVisitado/{id}', [ProductoController::class, 'productoVisitado']);

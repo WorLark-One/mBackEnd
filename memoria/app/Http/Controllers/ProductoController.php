@@ -29,6 +29,17 @@ class ProductoController extends Controller
         }
     }
 
+    public function homeProducts() {
+        try {
+            $productosDescuento= Producto::orderBy('descuento', 'DESC')->take(3)->get();;
+            $productosTendencia = Producto::orderBy('puntaje_tendencia', 'DESC')->take(11)->get();;
+            return response()->json(['code' => '200','data_tendencia' => $productosTendencia, 'data_descuento' => $productosDescuento], 200);
+        } catch (\Exception $ex) {
+            return response()->json(['error' => $ex->getMessage()], 400);
+        }
+        
+    }
+
     /**
      * Buscar producto
      * @param  \Illuminate\Http\Request  $request
