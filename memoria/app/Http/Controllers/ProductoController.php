@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Producto;
 use App\Models\PrecioProducto;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Models\MiListaUser;
+use App\Models\User;
+use App\Mail\ProductoEnDescuento;
 use Validator;
 
 class ProductoController extends Controller
@@ -92,6 +96,7 @@ class ProductoController extends Controller
     {
         //
         $validator = Validator::make($request->all(), $this->rulesValidation());
+        $flagDescuento = false;
         if ($validator->fails()) {
             return response()->json(['code' => '400', 'message' => 'Request not valid for create product'], 400);
         }
@@ -106,6 +111,10 @@ class ProductoController extends Controller
                 $producto->ubicacion = $request->ubicacion;
                 $producto->link = $request->link;
                 $producto->marketplace = $request->marketplace;
+                $producto->visualizaciones= 0;
+                $producto->puntaje_tendencia= 0;
+                $producto->descuento = 0;
+                $producto->fecha_descuento = date('Y-m-d');
                 $producto->save();
                 $precioProducto = new PrecioProducto();
                 $precioProducto->producto_id = $producto->id;
@@ -119,6 +128,8 @@ class ProductoController extends Controller
                         $find->descuento = $descuento;
                         $find->fecha_descuento = date('Y-m-d');
                         //enviar notificaciones y correos
+                        $flagDescuento = true;
+                        
                     } else {
                         $find->descuento = 0;
                         $find->fecha_descuento = date('Y-m-d');
@@ -136,6 +147,7 @@ class ProductoController extends Controller
                         $find->descuento = $descuento;
                         $find->fecha_descuento = date('Y-m-d');
                         //enviar notificaciones y correos
+                        $flagDescuento = true;
                     } else {
                         $find->descuento = 0;
                         $find->fecha_descuento = date('Y-m-d');
@@ -153,9 +165,11 @@ class ProductoController extends Controller
                 $precioProducto->producto_id = $find->id;
                 $precioProducto->precio = $request->precio;
                 $precioProducto->fecha = date('Y-m-d');
-                
                 $find->save();
                 $precioProducto->save();
+                if ($flagDescuento){
+                    $this->enviarEmailDescuento($find);
+                }
                 return response()->json(['code' => '200','message' => 'Product updated'], 200);
             }
         } catch (\Exception $ex) {
@@ -174,6 +188,9 @@ class ProductoController extends Controller
         //
         try {
             $producto = Producto::findOrFail($id);
+            $producto->visualizaciones = $producto->visualizaciones + 1;
+            $producto->puntaje_tendencia = $this->obtenerTendencia($producto->visualizaciones, $producto->descuento, $producto->valoracion);
+            $producto->save();
             return response()->json(['code' => '200','data' => $producto], 200);
         } catch (\Exception $ex) {
             return response()->json(['error' => $ex->getMessage()],400);
@@ -216,7 +233,7 @@ class ProductoController extends Controller
         } else {
             $tendencia = ($visualizaciones * $alfa) + ($descuento * $beta) + ($valoracionPorcentaje * $gama);
         }
-        return $tendencia;
+        return intval($tendencia);
     }
 
     /**
@@ -229,7 +246,7 @@ class ProductoController extends Controller
         if($precioAnterior != null) {
             $descuento = 100 - (($precio * 100)/$precioAnterior);
         }
-        return $descuento;
+        return intval($descuento);
     }
 
     public function obtenerPorcentajeEstrellas($valoracion) {
@@ -270,6 +287,17 @@ class ProductoController extends Controller
     public function destroy(Producto $producto)
     {
         //
+    }
+
+    public function enviarEmailDescuento($producto)
+    {
+        $lista = MiListaUser::where('producto_id', $producto->id)->get();
+        if(!$lista->isEmpty()){
+            foreach($lista as $aux){
+                $usuario = User::findOrFail($aux->usuario_id);
+                Mail::to($usuario->email)->queue(new ProductoEnDescuento($producto));
+            }
+        }
     }
 
     /**

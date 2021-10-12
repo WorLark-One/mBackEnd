@@ -21,8 +21,8 @@ class Producto extends Model
         'marketplace',
         'valoracion',
         'cantidad_valoraciones',
-        'puntaje_tendencia',
         'visualizaciones',
+        'puntaje_tendencia',
         'descuento',
         'fecha_descuento'
     ];

@@ -91,7 +91,7 @@ class ValoracionProductoController extends Controller
         } else {
             $tendencia = ($visualizaciones * $alfa) + ($descuento * $beta) + ($valoracionPorcentaje * $gama);
         }
-        return $tendencia;
+        return intval($tendencia);
     }
 
     public function obtenerPorcentajeEstrellas($valoracion) {
@@ -153,6 +153,7 @@ class ValoracionProductoController extends Controller
                     $CantValoraciones = ValoracionProducto::where('producto_id','=', $request->producto_id)->count();
                     $producto->valoracion = $AvgValoraciones;
                     $producto->cantidad_valoraciones = $CantValoraciones;
+                    $producto->puntaje_tendencia = $this->obtenerTendencia($producto->visualizaciones, $producto->descuento, $producto->valoracion);
                     $producto->save();
                 } else {
                     return response()->json(['code' => '400','message' => 'Only the product must be updated with the same ID'], 200);
@@ -160,8 +161,6 @@ class ValoracionProductoController extends Controller
             } else {
                 return response()->json(['code' => '400','message' => 'Only the user who created the rating can update it'], 200);
             }   
-
-            
         } catch (\Exception $ex) {
             return response()->json(['error' => $ex->getMessage()],400);
         }
