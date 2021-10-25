@@ -6,9 +6,12 @@ use App\Models\Producto;
 use App\Models\PrecioProducto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use App\Models\MiListaUser;
 use App\Models\User;
 use App\Mail\ProductoEnDescuento;
+use App\Notifications\NotificationUser;
+use App\Events\DescuentoUser;
 use Validator;
 
 class ProductoController extends Controller
@@ -307,8 +310,28 @@ class ProductoController extends Controller
             foreach($lista as $aux){
                 $usuario = User::findOrFail($aux->usuario_id);
                 Mail::to($usuario->email)->queue(new ProductoEnDescuento($producto));
+                $this->sendNotificacion($aux->usuario_id);
             }
         }
+    }
+
+    public function getNotificacionUser(){
+        return auth()->user()->notifications;
+    }
+
+    public function markReadNotificacion(){
+        $user = auth()->user();
+        $user->unreadNotifications->marAsRead();
+        return $user->notifications;
+    }
+
+    public function sendNotificacion($user_id) {
+        //logica
+        //$user = User::findOrFail($user_id);
+        //notify();
+        //Notification::send($user,  new NotificationUser());
+        //Event::push(event, payload);
+        event(new DescuentoUser($user_id));
     }
 
     /**

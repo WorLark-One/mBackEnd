@@ -45,6 +45,9 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'private'], function
     Route::delete('/deleteAuxProductMiList/{id}/{usuario_id}', [MiListaUserController::class, 'destroyAux']);
     Route::get('/getOnUserList/{usuario_id}/{producto_id}', [MiListaUserController::class, 'onUserList']);
     Route::get('/getUserList/{usuario_id}', [MiListaUserController::class, 'userList']);
+    Route::get('/getNotificationUser', [ProductoController::class, 'getNotificacionUser']);
+    Route::any('/markReadNotificacion', [ProductoController::class, 'markReadNotificacion']);
+    Route::any('/sendNotificacion/{user_id}', [ProductoController::class, 'sendNotificacion']);
 });
 
 
