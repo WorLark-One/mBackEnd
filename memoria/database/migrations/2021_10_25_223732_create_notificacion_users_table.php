@@ -14,8 +14,17 @@ class CreateNotificacionUsersTable extends Migration
     public function up()
     {
         Schema::create('notificacion_users', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id');
+            $table->bigInteger('producto_id')->unsigned();
+            $table->bigInteger('usuario_id')->unsigned();
+            $table->string('nombre_producto');
+            $table->bigInteger('precio_producto');
+            $table->integer('descuento_producto');
+            $table->boolean('notificacion_leida')->default(0);
             $table->timestamps();
+
+            $table->foreign('producto_id')->references('id')->on('producto')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('usuario_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

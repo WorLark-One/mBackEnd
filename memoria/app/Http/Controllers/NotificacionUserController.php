@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\NotificacionUser;
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class NotificacionUserController extends Controller
 {
@@ -41,12 +42,44 @@ class NotificacionUserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\NotificacionUser  $notificacionUser
      * @return \Illuminate\Http\Response
      */
-    public function show(NotificacionUser $notificacionUser)
+    public function show($usuario_id)
     {
         //
+        $notifications = [];
+        $newNotifications = 0;
+        try {
+            $usuario = User::findOrFail($usuario_id);
+            $notifications = NotificacionUser::where('usuario_id',$usuario_id)->get();
+            $newNotifications = $notifications->where('notificacion_leida',0)->count();
+        } catch (\Exception $ex) {
+            return response()->json(['error' => $ex->getMessage()],400);
+        }
+        return response()->json(['code' => '200','data' => $notifications, 'count' => $newNotifications], 200);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function readNotify($usuario_id)
+    {
+        try {
+            $usuario = User::findOrFail($usuario_id);
+            $notifications = NotificacionUser::where('usuario_id',$usuario_id)->where('notificacion_leida',0)->get();
+            if(!$notifications->isEmpty()){
+                foreach($notifications  as $aux){
+                    $notify = NotificacionUser::findOrFail($aux->id);
+                    $notify->notificacion_leida = 1;
+                    $notify->save();
+                }
+            }
+        } catch (\Exception $ex) {
+            return response()->json(['error' => $ex->getMessage()],400);
+        }
+        return response()->json(['code' => '200','message' => 'Notifications updated'], 200);
     }
 
     /**
@@ -74,12 +107,22 @@ class NotificacionUserController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\NotificacionUser  $notificacionUser
      * @return \Illuminate\Http\Response
      */
-    public function destroy(NotificacionUser $notificacionUser)
+    public function destroy($id, $usuario_id)
     {
         //
+        try {
+            $usuario = User::findOrFail($usuario_id);
+            $notify = NotificacionUser::findOrFail($id);
+            if($usuario_id == $notify->usuario_id){
+                $notify->delete();
+            } else {
+                return response()->json(['code' => '400','message' => 'Only the user owner can delete the notification'], 200);
+            }
+        } catch (\Exception $ex) {
+            return response()->json(['error' => $ex->getMessage()],400);
+        }
+        return response()->json(['code' => '200','message' => 'Notification deleted'], 200);
     }
 }

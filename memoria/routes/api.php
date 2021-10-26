@@ -8,6 +8,7 @@ use App\Http\Controllers\ComunaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ValoracionProductoController;
 use App\Http\Controllers\MiListaUserController;
+use App\Http\Controllers\NotificacionUserController;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
@@ -45,9 +46,13 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'private'], function
     Route::delete('/deleteAuxProductMiList/{id}/{usuario_id}', [MiListaUserController::class, 'destroyAux']);
     Route::get('/getOnUserList/{usuario_id}/{producto_id}', [MiListaUserController::class, 'onUserList']);
     Route::get('/getUserList/{usuario_id}', [MiListaUserController::class, 'userList']);
-    Route::get('/getNotificationUser', [ProductoController::class, 'getNotificacionUser']);
-    Route::any('/markReadNotificacion', [ProductoController::class, 'markReadNotificacion']);
-    Route::any('/sendNotificacion/{user_id}', [ProductoController::class, 'sendNotificacion']);
+    //Route::get('/getNotificationUser', [ProductoController::class, 'getNotificacionUser']);
+    //Route::any('/markReadNotificacion', [ProductoController::class, 'markReadNotificacion']);
+    //Route::any('/sendNotificacion/{user_id}', [ProductoController::class, 'sendNotificacion']);
+    Route::get('/getNotificationUser/{usuario_id}', [NotificacionUserController::class, 'show']);
+    Route::put('/markReadNotificacion/{usuario_id}', [NotificacionUserController::class, 'readNotify']);
+    Route::delete('/deleteNotificacion/{id}/{usuario_id}', [NotificacionUserController::class, 'destroy']);
+
 });
 
 
