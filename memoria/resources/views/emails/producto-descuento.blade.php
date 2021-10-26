@@ -1,4 +1,3 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office" style="font-family:arial, 'helvetica neue', helvetica, sans-serif">
  <head> 
@@ -108,7 +107,7 @@ a[x-apple-data-detectors] {
                   <td class="es-m-p0r" align="center" style="padding:0;Margin:0;width:240px"> 
                    <table cellpadding="0" cellspacing="0" width="100%" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:separate;border-spacing:0px;border-radius:5px" role="presentation"> 
                      <tr> 
-                      <td align="center" style="padding:5px;Margin:0;font-size:0px"><img src="{{ $producto['imagen'] }}" alt style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic" width="230"></td> 
+                      <td align="center" style="padding:5px;Margin:0;font-size:0px"><img src="{{$producto['imagen']}}" alt style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic" width="230"></td> 
                      </tr> 
                    </table></td> 
                  </tr> 
@@ -122,10 +121,13 @@ a[x-apple-data-detectors] {
                       <td align="center" style="Margin:0;padding-bottom:5px;padding-top:10px;padding-left:10px;padding-right:10px"><h3 style="Margin:0;line-height:24px;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-size:20px;font-style:normal;font-weight:bold;color:#333333">{{$producto['titulo']}}</h3></td> 
                      </tr> 
                      <tr> 
-                      <td align="center" style="Margin:0;padding-bottom:10px;padding-left:10px;padding-right:10px;padding-top:35px"><h1 style="Margin:0;line-height:80px;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-size:67px;font-style:normal;font-weight:bold;color:#333333"><strong>{{$producto['descuento']}}%</strong></h1></td> 
+                      <td align="center" style="Margin:0;padding-bottom:10px;padding-left:10px;padding-right:10px;padding-top:35px"><h1 style="Margin:0;line-height:80px;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-size:67px;font-style:normal;font-weight:bold;color:#333333"><strong>-{{$producto['descuento']}}%</strong></h1></td> 
                      </tr> 
                      <tr> 
-                      <td align="center" style="padding:10px;Margin:0"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;color:#333333;font-size:14px"><strong>De descuento</strong></p></td> 
+                      <td align="center" style="padding:10px;Margin:0"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:27px;color:#333333;font-size:18px"><b>AHORA ${{$precio_actual_producto}}&nbsp;</b></p></td> 
+                     </tr> 
+                     <tr> 
+                      <td align="center" style="padding:10px;Margin:0"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:27px;color:#333333;font-size:18px"><b>ANTES&nbsp;</b><span style="color:#A9A9A9"><s style="text-decoration:line-through"><b>${{$precio_anterior_producto}}</b></s></span></p></td> 
                      </tr> 
                    </table></td> 
                  </tr> 
@@ -133,7 +135,7 @@ a[x-apple-data-detectors] {
                <!--[if mso]></td></tr></table><![endif]--></td> 
              </tr> 
              <tr> 
-              <td align="left" style="padding:0;Margin:0;padding-left:20px;padding-right:20px;padding-bottom:30px"> 
+              <td align="left" style="Margin:0;padding-top:15px;padding-bottom:20px;padding-left:20px;padding-right:20px"> 
                <table cellpadding="0" cellspacing="0" width="100%" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px"> 
                  <tr> 
                   <td align="center" valign="top" style="padding:0;Margin:0;width:560px"> 
@@ -153,13 +155,13 @@ a[x-apple-data-detectors] {
           <td align="center" style="padding:0;Margin:0"> 
            <table bgcolor="#ffffff" class="es-footer-body" align="center" cellpadding="0" cellspacing="0" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:#FFFFFF;width:600px"> 
              <tr> 
-              <td align="left" style="padding:0;Margin:0;padding-top:20px"> 
+              <td align="left" bgcolor="#17a2b8" style="padding:0;Margin:0;background-color:#17a2b8"> 
                <table cellpadding="0" cellspacing="0" width="100%" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px"> 
                  <tr> 
                   <td align="center" valign="top" style="padding:0;Margin:0;width:600px"> 
                    <table cellpadding="0" cellspacing="0" width="100%" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px"> 
                      <tr> 
-                      <td align="center" style="padding:0;Margin:0"><span class="es-button-border" style="border-style:solid;border-color:#2CB543;background:#17a2b8;border-width:0px;display:block;border-radius:1px;width:auto"><a href="{{$pagina}}" class="es-button es-button-2" target="_blank" style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#FFFFFF;font-size:20px;border-style:solid;border-color:#17a2b8;border-width:30px 5px 10px;display:block;background:#17a2b8;border-radius:1px;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-weight:bold;font-style:normal;line-height:24px;width:auto;text-align:center">Visitar KMaule</a></span></td> 
+                      <td align="center" style="padding:0;Margin:0"><span class="es-button-border" style="border-style:solid;border-color:#2cb543;background:#17a2b8;border-width:0px;display:block;border-radius:1px;width:auto"><a href="{{$pagina}}" class="es-button es-button-2" target="_blank" style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#FFFFFF;font-size:20px;border-style:solid;border-color:#17a2b8;border-width:30px 5px 10px;display:block;background:#17a2b8;border-radius:1px;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-weight:bold;font-style:normal;line-height:24px;width:auto;text-align:center">Visitar KMaule</a></span></td> 
                      </tr> 
                    </table></td> 
                  </tr> 

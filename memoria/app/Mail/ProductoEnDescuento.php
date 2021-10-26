@@ -12,6 +12,8 @@ class ProductoEnDescuento extends Mailable implements ShouldQueue
     use Queueable, SerializesModels;
 
     public $producto;
+    public $precio_actual_producto;
+    public $precio_anterior_producto;
     public $subject = "Producto en descuento KMaule";
     public $pagina = "http://localhost:8080/";
     /**
@@ -19,10 +21,12 @@ class ProductoEnDescuento extends Mailable implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($producto)
+    public function __construct($producto, $precio_anterior_producto)
     {
         //
         $this->producto = $producto;
+        $this->precio_actual_producto = number_format($producto->precio, 0, ',', '.');
+        $this->precio_anterior_producto = number_format($precio_anterior_producto, 0, ',', '.');
     }
 
     /**
@@ -34,4 +38,6 @@ class ProductoEnDescuento extends Mailable implements ShouldQueue
     {
         return $this->view('emails.producto-descuento');
     }
+
+
 }

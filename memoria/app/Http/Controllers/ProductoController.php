@@ -55,9 +55,22 @@ class ProductoController extends Controller
                 $precioMinRango = 0;
                 $PrecioMaxRango = 1;
                 if($comuna == 'Todas') {
-                    $p = Producto::orderBy('precio', $orientacion)->where('titulo', 'LIKE', "%$producto%");
+                    if($orientacion == "descuento"){
+                        $p = Producto::orderBy('descuento', 'DESC')->where('titulo', 'LIKE', "%$producto%");
+                    } else if ($orientacion == "tendencia"){
+                        $p = Producto::orderBy('puntaje_tendencia', 'DESC')->where('titulo', 'LIKE', "%$producto%");
+                    } else {
+                        $p = Producto::orderBy('precio', $orientacion)->where('titulo', 'LIKE', "%$producto%");
+                    }
+                    
                 } else {
-                    $p = Producto::orderBy('precio', $orientacion)->where('titulo', 'LIKE', "%$producto%")->where('ubicacion', '=', $comuna);
+                    if($orientacion == "descuento"){
+                        $p = Producto::orderBy('descuento', 'DESC')->where('titulo', 'LIKE', "%$producto%")->where('ubicacion', '=', $comuna);
+                    } else if ($orientacion == "tendencia"){
+                        $p = Producto::orderBy('puntaje_tendencia', 'DESC')->where('titulo', 'LIKE', "%$producto%")->where('ubicacion', '=', $comuna);
+                    } else {
+                        $p = Producto::orderBy('precio', $orientacion)->where('titulo', 'LIKE', "%$producto%")->where('ubicacion', '=', $comuna);
+                    }
                 }
                 if($marketplace !='ComunidadC+marketmaule+MercadoLibre'){
                     $auxMarketPLace = explode("+", $marketplace);
@@ -112,6 +125,7 @@ class ProductoController extends Controller
         //
         $validator = Validator::make($request->all(), $this->rulesValidation());
         $flagDescuento = false;
+        $precio_anterior_producto;
         if ($validator->fails()) {
             return response()->json(['code' => '400', 'message' => 'Request not valid for create product'], 400);
         }
@@ -137,6 +151,7 @@ class ProductoController extends Controller
                 $precioProducto->fecha = date('Y-m-d');
                 $precioProducto->save();
             } else {
+                $precio_anterior_producto = $find->precio; 
                 if($find->descuento == 0 ) {
                     $descuento = $this->obtenerDescuento($request->precio, $find->precio);
                     if($descuento > 0) {
@@ -183,7 +198,7 @@ class ProductoController extends Controller
                 $find->save();
                 $precioProducto->save();
                 if ($flagDescuento){
-                    $this->enviarEmailDescuento($find);
+                    $this->enviarEmailDescuento($find, $precio_anterior_producto);
                 }
                 return response()->json(['code' => '200','message' => 'Product updated'], 200);
             }
@@ -304,13 +319,13 @@ class ProductoController extends Controller
         //
     }
 
-    public function enviarEmailDescuento($producto)
+    public function enviarEmailDescuento($producto, $precio_anterior_producto)
     {
         $lista = MiListaUser::where('producto_id', $producto->id)->get();
         if(!$lista->isEmpty()){
             foreach($lista as $aux){
                 $usuario = User::findOrFail($aux->usuario_id);
-                Mail::to($usuario->email)->queue(new ProductoEnDescuento($producto));
+                Mail::to($usuario->email)->queue(new ProductoEnDescuento($producto, $precio_anterior_producto));
                 $this->sendNotificacion($aux->usuario_id, $producto);
             }
         }
