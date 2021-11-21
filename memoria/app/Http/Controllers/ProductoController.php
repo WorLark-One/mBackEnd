@@ -352,6 +352,58 @@ class ProductoController extends Controller
         event(new DescuentoUser($user_id));
     }
 
+    public function nuevoDescuento($id_producto, $descuento){
+        try {
+            $find = Producto::findOrFail($id_producto);
+            $precio_anterior_producto = $find->precio; 
+            $aux = (($find->precio)/100) * $descuento;
+            $nuevo_precio = $precio_anterior_producto - $aux; 
+            if($find->descuento == 0 ) {
+                $descuento = $this->obtenerDescuento($nuevo_precio, $find->precio);
+                if($descuento > 0) {
+                    $find->descuento = $descuento;
+                    $find->fecha_descuento = date('Y-m-d');
+                    $flagDescuento = true;
+                } else {
+                    $find->descuento = 0;
+                    $find->fecha_descuento = date('Y-m-d');
+                }
+            } else if ($find->descuento > 0){
+                if ($find->precio == $nuevo_precio){
+                    $date = date("Y-m-d", strtotime("-5 day"));
+                    if($find->fecha_descuento < $date){
+                        $find->descuento = 0;
+                        $find->fecha_descuento = date('Y-m-d');
+                    }
+                }
+                else if($nuevo_precio < $find->precio) {
+                    $descuento = $this->obtenerDescuento($nuevo_precio, $find->precio);
+                    $find->descuento = $descuento;
+                    $find->fecha_descuento = date('Y-m-d');
+                    //enviar notificaciones y correos
+                    $flagDescuento = true;
+                } else {
+                    $find->descuento = 0;
+                    $find->fecha_descuento = date('Y-m-d');
+                }
+                $find->precio = $nuevo_precio;
+                $find->puntaje_tendencia = $this->obtenerTendencia($find->visualizaciones, $find->descuento, $find->valoracion);
+                $precioProducto = new PrecioProducto();
+                $precioProducto->producto_id = $find->id;
+                $precioProducto->precio = $nuevo_precio;
+                $precioProducto->fecha = date('Y-m-d');
+                $find->save();
+                $precioProducto->save();
+                if ($flagDescuento){
+                    $this->enviarEmailDescuento($find, $precio_anterior_producto);
+                }
+                return response()->json(['code' => '200','message' => 'Product updated'], 200);
+            }
+        } catch (\Exception $ex) {
+            return response()->json(['error' => $ex->getMessage()],400);
+        }
+    }
+
     /**
     * Rules validation of request producto
     * @return array of rules validation

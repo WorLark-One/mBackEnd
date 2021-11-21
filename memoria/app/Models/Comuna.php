@@ -14,7 +14,9 @@ class Comuna extends Model
     protected $fillable = [
         'id',
         'nombre',
-        'region',
+        'region_id',
+        'nombre_region',
+        'updated_at'
     ];
 
     //public function comunaRegion(): BelongsTo

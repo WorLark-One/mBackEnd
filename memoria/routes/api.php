@@ -11,6 +11,7 @@ use App\Http\Controllers\MiListaUserController;
 use App\Http\Controllers\NotificacionUserController;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use App\Http\Controllers\RegionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,10 +33,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'private'], function () {
-    Route::get('/getComunas', [ComunaController::class, 'index']);
-    Route::post('/postComuna', [ComunaController::class, 'store']);
-    Route::put('/updateComuna/{id}', [ComunaController::class, 'update']);
-    Route::delete('/deleteComuna/{id}', [ComunaController::class, 'destroy']);
     Route::get('/getRatingUser/{usuario_id}', [ValoracionProductoController::class, 'ratingUser']);
     Route::get('/getIsRating/{usuario_id}/{producto_id}', [ValoracionProductoController::class, 'isRating']);
     Route::delete('/deleteRating/{id}/{usuario_id}', [ValoracionProductoController::class, 'destroy']);
@@ -53,10 +50,22 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'private'], function
     Route::put('/markReadNotificacion/{usuario_id}', [NotificacionUserController::class, 'readNotify']);
     Route::delete('/deleteNotificacion/{id}/{usuario_id}', [NotificacionUserController::class, 'destroy']);
 
+    
+    Route::get('/getRegion',[RegionController::class, 'index']);
+    Route::post('/postRegion',[RegionController::class, 'store']);
+    Route::put('/updateRegion/{id}', [RegionController::class, 'update']);
+    Route::delete('/deleteRegion/{id}', [RegionController::class, 'destroy']);
+
+    Route::get('/getComunas', [ComunaController::class, 'index']);
+    Route::post('/postComuna', [ComunaController::class, 'store']);
+    Route::put('/updateComuna/{id}', [ComunaController::class, 'update']);
+    Route::delete('/deleteComuna/{id}', [ComunaController::class, 'destroy']);
+    Route::get('/enviarNotificacion/{id_producto}/{descuento}', [ProductoController::class, 'nuevoDescuento']);
 });
 
 
 Route::group(['middleware' => [], 'prefix' => 'public'], function () {
+    Route::get('/getComunasPublic', [ComunaController::class, 'index']);
     Route::post('/registerUser', [UserController::class, 'store']);
     Route::get('/getProductos', [ProductoController::class, 'index']);
     Route::get('/getHomeProductos', [ProductoController::class, 'homeProducts']);
