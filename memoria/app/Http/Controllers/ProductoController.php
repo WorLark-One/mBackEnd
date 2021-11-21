@@ -137,7 +137,7 @@ class ProductoController extends Controller
                 $producto->descripcion = $request->descripcion;
                 $producto->precio = $request->precio;
                 $producto->imagen = $request->imagen;
-                $producto->ubicacion = $request->ubicacion;
+                $producto->ubicacion = $this->eliminar_acentos($request->ubicacion);
                 $producto->link = $request->link;
                 $producto->marketplace = $request->marketplace;
                 $producto->visualizaciones= 0;
@@ -187,7 +187,7 @@ class ProductoController extends Controller
                 $find->descripcion = $request->descripcion;
                 $find->precio = $request->precio;
                 $find->imagen = $request->imagen;
-                $find->ubicacion = $request->ubicacion;
+                $find->ubicacion = $this->eliminar_acentos($request->ubicacion);
                 $find->link = $request->link;
                 $find->puntaje_tendencia = $this->obtenerTendencia($find->visualizaciones, $find->descuento, $find->valoracion);
                 $find->marketplace = $request->marketplace;
@@ -421,4 +421,47 @@ class ProductoController extends Controller
         ];
         return $rules;
     }
+
+    function eliminar_acentos($cadena){
+		
+		//Reemplazamos la A y a
+		$cadena = str_replace(
+		array('Á', 'À', 'Â', 'Ä', 'á', 'à', 'ä', 'â', 'ª'),
+		array('A', 'A', 'A', 'A', 'a', 'a', 'a', 'a', 'a'),
+		$cadena
+		);
+ 
+		//Reemplazamos la E y e
+		$cadena = str_replace(
+		array('É', 'È', 'Ê', 'Ë', 'é', 'è', 'ë', 'ê'),
+		array('E', 'E', 'E', 'E', 'e', 'e', 'e', 'e'),
+		$cadena );
+ 
+		//Reemplazamos la I y i
+		$cadena = str_replace(
+		array('Í', 'Ì', 'Ï', 'Î', 'í', 'ì', 'ï', 'î'),
+		array('I', 'I', 'I', 'I', 'i', 'i', 'i', 'i'),
+		$cadena );
+ 
+		//Reemplazamos la O y o
+		$cadena = str_replace(
+		array('Ó', 'Ò', 'Ö', 'Ô', 'ó', 'ò', 'ö', 'ô'),
+		array('O', 'O', 'O', 'O', 'o', 'o', 'o', 'o'),
+		$cadena );
+ 
+		//Reemplazamos la U y u
+		$cadena = str_replace(
+		array('Ú', 'Ù', 'Û', 'Ü', 'ú', 'ù', 'ü', 'û'),
+		array('U', 'U', 'U', 'U', 'u', 'u', 'u', 'u'),
+		$cadena );
+ 
+		//Reemplazamos la N, n, C y c
+		$cadena = str_replace(
+		array('Ñ', 'ñ', 'Ç', 'ç'),
+		array('N', 'n', 'C', 'c'),
+		$cadena
+		);
+		
+		return $cadena;
+	}
 }
