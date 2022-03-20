@@ -47,9 +47,9 @@ class PrecioProductoController extends Controller
     public function show($id)
     {
         try {
-            $historial = PrecioProducto::orderBy('created_at', 'DESC')
+            $historial = PrecioProducto::orderBy('fecha', 'DESC')
                 ->where('producto_id', '=', $id)
-                ->select('fecha', 'precio');
+                ->select(['fecha', 'precio']);
                 
             $historial = $historial->take(15)->distinct()->get();
             return response()->json(['code' => '200','data' => $historial], 200);
