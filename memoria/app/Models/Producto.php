@@ -11,12 +11,19 @@ class Producto extends Model
     protected $table = 'producto';
 
     protected $fillable = [
+        'id',
         'titulo',
         'descripcion',
         'precio',
         'imagen',
         'ubicacion',
         'link',
-        'marketplace'
+        'marketplace',
+        'valoracion',
+        'cantidad_valoraciones',
+        'visualizaciones',
+        'puntaje_tendencia',
+        'descuento',
+        'fecha_descuento'
     ];
 }
