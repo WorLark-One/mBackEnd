@@ -12,7 +12,7 @@ use App\Http\Controllers\NotificacionUserController;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Http\Controllers\RegionController;
-
+use App\Http\Controllers\MiCartUserController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -61,6 +61,11 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'private'], function
     Route::put('/updateComuna/{id}', [ComunaController::class, 'update']);
     Route::delete('/deleteComuna/{id}', [ComunaController::class, 'destroy']);
     Route::get('/enviarNotificacion/{id_producto}/{descuento}', [ProductoController::class, 'nuevoDescuento']);
+
+    Route::post('/postProductoCart',[MiCartUserController::class, 'store']);
+    Route::delete('/deleteProductoCart/{id}/{usuario_id}',[MiCartUserController::class, 'destroy']);
+    Route::get('/getCartUsuario/{usuario_id}',[MiCartUserController::class, 'userCartList']);
+    Route::delete('/deleteProductoCartRaiz/{id}/{usuario_id}',[MiCartUserController::class, 'destroyRaiz']);
 });
 
 
