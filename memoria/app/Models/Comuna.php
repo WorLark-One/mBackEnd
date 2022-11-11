@@ -23,4 +23,10 @@ class Comuna extends Model
     //{
         //return $this->belongsTo(Region::class);
     //}
+
+    public function getComunasPorNombresComunasArray($array)
+    {
+        
+    }
+
 }

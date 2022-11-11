@@ -31,6 +31,11 @@ class UserController extends Controller
             'password' => Hash::make($request['password']),
         ]);
         $user->assignRole($request['rol']);
+        if ($request->shopper) {
+            $user->assignRole('shopper');
+            $user->shopper_comunes = $request->comunas;
+            $user->save();
+        }
 
         return response()->json(['code' => '200','data' => $user], 200);
     }
@@ -45,7 +50,9 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required|unique:users,email',
             'password' => 'required',
-            'rol' => 'required'
+            'rol' => 'required',
+            'shopper' => 'required',
+            'comunas' => 'required'
         ];
         return $rules;
     }
